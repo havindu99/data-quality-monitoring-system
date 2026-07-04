@@ -1,0 +1,15 @@
+timestamp,file_name,records,columns,issues,score
+2026-07-04 23:15:01,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:17:18,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:17:54,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:20:08,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:20:27,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:31,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:36,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:40,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:42,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:45,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:48,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:51,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:54,sample_data_for_quality_check.csv,10,5,8,60
+2026-07-04 23:22:57,sample_data_for_quality_check.csv,10,5,8,60
