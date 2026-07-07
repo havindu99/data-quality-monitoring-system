@@ -1,54 +1,71 @@
 # 📊 Data Quality Monitoring System
 
-A Streamlit dashboard for uploading any CSV file and instantly checking its data quality — missing values, duplicates, invalid fields, statistical outliers, and trends over time.
+A Python-based Data Quality Monitoring System built using **Streamlit**, **Pandas**, **Plotly**, and **FPDF** to ensure data integrity and reliability.
+
+This project automatically analyzes uploaded CSV datasets, identifies common data quality issues, generates reports, and provides an interactive dashboard for monitoring data health.
 
 ---
 
-## Features
+# 🚀 Features
 
-- **Dataset Preview** — view the uploaded CSV as a table
-- **Quality Score** — an overall 0–100% score based on detected issues
-- **Column Profiling** — per-column type, missing %, unique values, and (for numeric columns) min/max/mean/std dev/outlier count using the IQR method
-- **Alerts** — automatic detection of:
-  - Missing values
-  - Duplicate rows
-  - Invalid age (negative values)
-  - Invalid email (malformed format)
-  - Invalid phone (not 10 digits)
-  - Invalid join date (unparsable date)
-- **Row-level Drill-down** — pick an issue type and inspect the exact rows behind it
-- **Quality Score Trend** — tracks every upload's score over time and charts it
-- **Export**
-  - Download the dataset as CSV
-  - Download a one-page PDF summary report
+- Upload any CSV dataset
+- Detect missing values
+- Detect duplicate records
+- Validate email addresses
+- Validate phone numbers
+- Detect invalid ages
+- Validate join dates
+- Outlier detection
+- Column profiling
+- Interactive dashboard
+- Alerts for data quality issues
+- Data Quality Score calculation
+- Data Quality Trend analysis
+- Download CSV report
+- Download PDF report
 
 ---
 
-## Project Structure
+# 🛠 Technologies Used
+
+- Python
+- Streamlit
+- Pandas
+- Plotly
+- FPDF
+- NumPy
+
+---
+
+# 📁 Project Structure
 
 ```
 DataQualityMonitoringSystem/
+│
 ├── dashboard/
-│   ├── app.py              # Main Streamlit app
-│   └── style.css            # Custom dashboard theme
+│   ├── app.py
+│   └── style.css
+│
 ├── data/
-│   ├── raw/                 # (optional) raw input files
+│   ├── raw/
 │   └── reports/
-│       └── history.csv      # Auto-generated run history (created on first upload)
+│
 ├── docs/
 │   └── governance.md
+│
 ├── src/
-│   ├── __init__.py
-│   ├── alerts.py             # Alert detection logic
+│   ├── alerts.py
 │   ├── config.py
-│   ├── history.py            # Run history save/load for trend tracking
+│   ├── history.py
 │   ├── load_data.py
 │   ├── metrics.py
-│   ├── profiling.py          # Column-level statistics & outlier detection
-│   ├── quality_checks.py     # Core quality check logic
-│   ├── report_generator.py   # PDF report generation
+│   ├── profiling.py
+│   ├── quality_checks.py
+│   ├── report_generator.py
 │   └── utils.py
+│
 ├── tests/
+│
 ├── main.py
 ├── requirements.txt
 └── README.md
@@ -56,44 +73,173 @@ DataQualityMonitoringSystem/
 
 ---
 
-## Setup
+# ⚙️ Installation
 
-1. **Clone / open the project folder**
+Clone the repository
 
-2. **Create and activate a virtual environment** (if not already set up)
-   ```powershell
-   python -m venv venv
-   venv\Scripts\Activate.ps1
-   ```
+```bash
+git clone https://github.com/havindu99/data-quality-monitoring-system.git
+```
 
-3. **Install dependencies**
-   ```powershell
-   python -m pip install -r requirements.txt
-   ```
-   Make sure `streamlit`, `pandas`, `plotly`, and `fpdf2` are included.
+Go to project folder
 
-4. **Run the dashboard**
-   ```powershell
-   streamlit run dashboard/app.py
-   ```
+```bash
+cd data-quality-monitoring-system
+```
 
-5. Open the local URL shown in the terminal (usually `http://localhost:8501`).
+Create virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate environment
+
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
-## Usage
+# ▶️ Run the Dashboard
 
-1. Upload any `.csv` file using the file uploader.
-2. Review the dataset preview, quality score, and column profiling table.
-3. Check the **Alerts** section for a JSON summary of detected issues.
-4. Use the **Drill-down** dropdown to inspect the exact rows behind any issue (including statistical outliers per numeric column).
-5. Upload more files over time to build up the **Quality Score Trend** chart.
-6. Export results as CSV or a PDF report from the **Export** section.
+```bash
+streamlit run dashboard/app.py
+```
 
 ---
 
-## Notes
+# 📊 Dashboard Modules
 
-- The `history.csv` file (under `data/reports/`) is created automatically on first upload and grows with every subsequent run — this powers the trend chart.
-- Column profiling and outlier detection use the **IQR (Interquartile Range) method**, which flags values falling far outside the typical range for that column.
-- The dashboard theme (`style.css`) uses **Space Grotesk** and **IBM Plex Mono**, loaded via Google Fonts with safe local fallbacks.
+## Dashboard Summary
+
+- Data Quality Score
+- Total Records
+- Total Columns
+- Total Issues
+
+---
+
+## Dataset
+
+- Dataset Preview
+- Drill-down Analysis
+- Invalid Records
+
+---
+
+## Column Profiling
+
+- Data Type
+- Missing Percentage
+- Unique Values
+- Outlier Detection
+
+---
+
+## Alerts
+
+- Missing Values
+- Duplicate Rows
+- Invalid Email
+- Invalid Phone
+- Invalid Age
+- Invalid Join Date
+
+---
+
+## Charts
+
+- Bar Chart
+- Pie Chart
+- Quality Score Trend
+
+---
+
+## Export
+
+- CSV Report
+- PDF Report
+
+---
+
+# 📄 Data Quality Checks
+
+The system automatically validates:
+
+- Missing Values
+- Duplicate Rows
+- Invalid Emails
+- Invalid Phone Numbers
+- Invalid Age Values
+- Invalid Join Dates
+- Outlier Records
+
+---
+
+# 📈 Data Quality Score
+
+The quality score is calculated based on the total number of detected issues.
+
+Higher score indicates better data quality.
+
+```
+100% = Excellent
+90–99% = Good
+70–89% = Fair
+Below 70% = Poor
+```
+
+---
+
+# 📑 Generated Reports
+
+The system generates:
+
+- Data Health Dashboard
+- Interactive Charts
+- PDF Summary Report
+- CSV Export
+
+---
+
+# 🔒 Data Governance Recommendations
+
+- Validate data before storing.
+- Remove duplicate records.
+- Enforce mandatory fields.
+- Validate email and phone formats.
+- Monitor data quality regularly.
+- Maintain audit logs.
+- Apply role-based access control.
+
+---
+
+# 🎯 Project Objectives
+
+- Improve data integrity
+- Improve data reliability
+- Automate data quality monitoring
+- Generate health reports
+- Provide real-time quality insights
+
+---
+
+# 👨‍💻 Developed By
+
+**Havindu**
+-Data Science Intern
+
+---
+
+# 📜 License
+
+This project is developed for educational and research purposes.
