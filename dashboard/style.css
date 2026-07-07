@@ -1,283 +1,480 @@
-/* ============================================================
-   Data Quality Monitoring System — "Inspection Ledger" Theme v3
-   Palette:
-     Ink       #0b0e14  (background)
-     Panel     #12161f  (cards/panels)
-     Line      #232a38  (borders)
-     Paper     #e8e6df  (primary text, warm off-white)
-     Amber     #e8b339  (primary accent — audit/flag color)
-     Teal      #2dd98f  (pass/good)
-     Coral     #ef5b5b  (fail/bad)
-   Type: Space Grotesk (display) + IBM Plex Mono (data/numbers)
-   ============================================================ */
+/* ==========================================================================
+   Data Quality Monitoring System — Glass Audit theme (v2)
+   Display: Space Grotesk | Body/Data: IBM Plex Mono
+   Note: rules use !important deliberately — Streamlit re-injects its own
+   theme stylesheet on every rerun with matching specificity, so soft
+   overrides get silently dropped. This version is written to win.
+   ========================================================================== */
 
-/* Fonts are loaded via <link> tags injected from app.py for reliability.
-   Fallback stacks below NEVER fall back to a serif/"Roman" font. */
-
-/* ---------- Base ---------- */
-.stApp {
-    background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(232,179,57,0.07), transparent 60%),
-        radial-gradient(900px 500px at 95% 0%, rgba(45,217,143,0.05), transparent 55%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 32px),
-        #0b0e14;
-    color: #e8e6df;
-    font-family: 'IBM Plex Mono', 'Consolas', 'SFMono-Regular', Menlo, monospace;
+:root {
+  --bg-0: #05070d;
+  --bg-1: #0a0f1a;
+  --glass: rgba(255, 255, 255, 0.055) !important;
+  --glass-strong: rgba(255, 255, 255, 0.09);
+  --glass-hover: rgba(255, 255, 255, 0.11);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --text: #f4f2ea;
+  --text-muted: #99a2b8;
+  --amber: #f0bd4a;
+  --green: #34e2a0;
+  --red: #ff6b6b;
+  --blue: #6dabe8;
+  --radius: 16px;
 }
 
-/* Give the main content column a touch of breathing room */
-[data-testid="stAppViewContainer"] > .main .block-container {
-    padding-top: 2.2rem;
-    max-width: 1200px;
+/* signature element: a thin animated audit-scan bar pinned to the top of
+   the viewport — a quiet nod to "continuous monitoring" rather than a
+   static decoration */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 9999;
+  background: linear-gradient(90deg,
+    transparent, var(--green) 20%, var(--amber) 50%, var(--blue) 80%, transparent);
+  background-size: 200% 100%;
+  animation: scan-sweep 6s ease-in-out infinite;
+  opacity: 0.75;
 }
 
-/* Thin animated rule across the very top of the app */
-.stApp::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #e8b339, #2dd98f, #e8b339);
-    background-size: 200% 100%;
-    animation: ledgerScan 6s linear infinite;
-    z-index: 999;
-}
-@keyframes ledgerScan {
-    0% { background-position: 0% 0; }
-    100% { background-position: 200% 0; }
+@keyframes scan-sweep {
+  0%   { background-position: 100% 0; }
+  50%  { background-position: 0% 0; }
+  100% { background-position: 100% 0; }
 }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
 }
 
-/* ---------- Typography ---------- */
+/* ---------- global canvas ---------- */
+html, body, .stApp, [data-testid="stAppViewContainer"] {
+  background:
+    radial-gradient(1100px 620px at 12% -8%, rgba(52, 226, 160, 0.10), transparent 60%),
+    radial-gradient(900px 520px at 100% 0%, rgba(240, 189, 74, 0.08), transparent 55%),
+    radial-gradient(700px 500px at 50% 120%, rgba(109, 171, 232, 0.06), transparent 55%),
+    var(--bg-0) !important;
+}
+
+.stApp, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] li,
+.stApp label, .stCaption, [data-testid="stCaptionContainer"] {
+  font-family: "IBM Plex Mono", monospace !important;
+  color: var(--text);
+}
+
+/* NEVER touch font-family on icon elements — Streamlit renders icons
+   (sidebar collapse chevron, uploader cloud icon, etc.) as ligature text
+   in a special icon font (Material Symbols). Any font-family override
+   here — even "initial" — breaks the glyph and shows raw text like
+   "keyboard_double_arrow_left". Simplest fix: leave them alone entirely,
+   so Streamlit's own rule (which we no longer fight) applies normally.
+   This selector intentionally sets nothing. */
+
+/* thin grid texture across the main canvas for an instrument-panel feel */
+[data-testid="stAppViewContainer"] > .main {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  background-position: -1px -1px;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: "Space Grotesk", sans-serif !important;
+  color: var(--text) !important;
+}
+
 h1 {
-    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #f4f2ea;
-    position: relative;
-    padding-bottom: 16px;
-    margin-bottom: 6px;
-}
-h1::after {
-    content: "";
-    position: absolute;
-    left: 0; bottom: 0;
-    width: 64px; height: 3px;
-    background: #e8b339;
-    border-radius: 2px;
-}
-h1::before {
-    content: "AUDIT";
-    position: absolute;
-    top: -14px; left: 0;
-    font-family: 'IBM Plex Mono', 'Consolas', 'SFMono-Regular', Menlo, monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.35em;
-    color: #6b7280;
-    font-weight: 500;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em;
 }
 
-h2, h3 {
-    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    color: #f4f2ea;
-    letter-spacing: -0.01em;
-    margin-top: 2.4rem;
-    animation: fadeUp 0.4s ease both;
+/* ---------- hero section (matches app.py's .hero-section markup) ---------- */
+.hero-section {
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-/* Give subheaders a small ledger-style tab before them */
-h3::before {
-    content: "▍";
-    color: #e8b339;
-    margin-right: 6px;
+.hero-badge {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  color: var(--green);
+  text-shadow: 0 0 18px rgba(52, 226, 160, 0.5);
+  margin-bottom: 0.9rem;
 }
 
-/* Caption / helper text under subheaders */
-[data-testid="stCaptionContainer"] {
-    color: #6b7280 !important;
-    font-size: 0.8rem !important;
-    margin-top: -8px;
-    margin-bottom: 10px;
+.hero-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
 }
 
-p, span, label, div {
-    font-family: 'IBM Plex Mono', 'Consolas', 'SFMono-Regular', Menlo, monospace;
+.hero-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
 }
 
-hr {
-    border-color: #1c2230 !important;
-    margin: 1.6rem 0 !important;
+.hero-title-row h1 {
+  font-size: 2.3rem !important;
+  margin: 0 0 0.5rem 0 !important;
 }
 
-/* ---------- File uploader ---------- */
-[data-testid="stFileUploader"] {
-    background: #12161f;
-    border: 1.5px dashed #e8b339;
-    border-radius: 6px;
-    padding: 20px;
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-[data-testid="stFileUploader"]:hover {
-    border-color: #2dd98f;
-    background: #141a24;
-    box-shadow: 0 0 0 3px rgba(45, 217, 143, 0.08);
-}
-[data-testid="stFileUploaderDropzoneInstructions"] {
-    color: #9aa1b0;
+.hero-title-row p {
+  color: var(--text-muted) !important;
+  font-size: 0.95rem !important;
+  max-width: 60ch;
+  margin: 0 !important;
 }
 
-/* ---------- Dataframe ---------- */
-[data-testid="stDataFrame"] {
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid #232a38;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    animation: fadeUp 0.35s ease both;
-}
-[data-testid="stDataFrame"] * {
-    font-family: 'IBM Plex Mono', 'Consolas', 'SFMono-Regular', Menlo, monospace !important;
-    font-size: 0.85rem !important;
+/* welcome box on the empty state */
+.welcome-box {
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 1.4rem;
+  backdrop-filter: blur(16px);
 }
 
-/* ---------- Metric cards ---------- */
-[data-testid="stMetric"] {
-    background: linear-gradient(180deg, #12161f 0%, #10141c 100%);
-    border: 1px solid #232a38;
-    border-left: 3px solid #e8b339;
-    border-radius: 6px;
-    padding: 18px 16px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
-    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    animation: fadeUp 0.4s ease both;
-}
-[data-testid="stMetric"]:hover {
-    border-left-color: #2dd98f;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0,0,0,0.3);
-}
-[data-testid="stMetricLabel"] {
-    color: #8a90a0;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 500;
-}
-[data-testid="stMetricValue"] {
-    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-    color: #f4f2ea;
-    font-size: 1.95rem;
-    font-weight: 700;
-    margin-top: 2px;
+.welcome-box h2 {
+  margin-top: 0 !important;
+  font-size: 1.4rem !important;
 }
 
-/* ---------- Alerts ---------- */
-div[data-testid="stAlert"] {
-    border-radius: 6px;
-    padding: 13px 18px;
-    border: 1px solid transparent;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-}
-.stSuccess {
-    background: rgba(45, 217, 143, 0.08) !important;
-    border-color: rgba(45, 217, 143, 0.35) !important;
-    border-left: 3px solid #2dd98f !important;
-}
-.stWarning {
-    background: rgba(232, 179, 57, 0.08) !important;
-    border-color: rgba(232, 179, 57, 0.35) !important;
-    border-left: 3px solid #e8b339 !important;
-}
-.stInfo {
-    background: rgba(90, 155, 212, 0.08) !important;
-    border-color: rgba(90, 155, 212, 0.35) !important;
-    border-left: 3px solid #5a9bd4 !important;
+.welcome-box p {
+  color: var(--text-muted) !important;
+  margin-bottom: 0 !important;
 }
 
-/* ---------- JSON viewer ---------- */
-[data-testid="stJson"] {
-    background: #0f131b;
-    border-radius: 6px;
-    padding: 14px;
-    border: 1px solid #232a38;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+/* feature cards (3-column empty state) */
+.feature-card {
+  height: 100%;
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 26px rgba(0,0,0,0.3);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
-/* ---------- Select box (drill-down dropdown) ---------- */
-[data-testid="stSelectbox"] > div > div {
-    background: #12161f;
-    border: 1px solid #232a38;
-    border-radius: 6px;
-    color: #e8e6df;
-    transition: border-color 0.2s ease;
-}
-[data-testid="stSelectbox"] > div > div:hover {
-    border-color: #e8b339;
+.feature-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
 }
 
-/* ---------- Expander ---------- */
-[data-testid="stExpander"] {
-    background: #10141c;
-    border: 1px solid #232a38;
-    border-radius: 6px;
-    overflow: hidden;
-}
-[data-testid="stExpander"] summary {
-    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    color: #e8e6df;
+.feature-card h3 {
+  font-size: 1.05rem !important;
+  margin: 0 0 0.5rem 0 !important;
 }
 
-/* ---------- Buttons ---------- */
-.stDownloadButton button, .stButton button {
-    background: #e8b339;
-    color: #0b0e14;
-    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 0.55rem 1.4rem;
-    letter-spacing: 0.01em;
-    box-shadow: 0 3px 10px rgba(232, 179, 57, 0.15);
-    transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-}
-.stDownloadButton button:hover, .stButton button:hover {
-    background: #2dd98f;
-    color: #0b0e14;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(45, 217, 143, 0.25);
-}
-.stDownloadButton button:active, .stButton button:active {
-    transform: translateY(0);
+.feature-card p {
+  color: var(--text-muted) !important;
+  font-size: 0.88rem !important;
+  margin: 0 !important;
 }
 
-/* Keyboard focus visibility (accessibility) */
-button:focus-visible, [data-testid="stSelectbox"] > div > div:focus-within {
-    outline: 2px solid #e8b339;
-    outline-offset: 2px;
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 0.9rem;
 }
 
-/* ---------- Plotly chart container ---------- */
-[data-testid="stPlotlyChart"] {
-    background: #12161f;
-    border-radius: 6px;
-    padding: 14px;
-    border: 1px solid #232a38;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+.feature-icon-green {
+  background: rgba(52, 226, 160, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(52, 226, 160, 0.3);
 }
 
-/* ---------- Sidebar ---------- */
+.feature-icon-blue {
+  background: rgba(109, 171, 232, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(109, 171, 232, 0.3);
+}
+
+.feature-icon-amber {
+  background: rgba(240, 189, 74, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(240, 189, 74, 0.3);
+}
+
+/* ---------- sidebar ---------- */
 section[data-testid="stSidebar"] {
-    background: #0f131b;
-    border-right: 1px solid #232a38;
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)) !important;
+  border-right: 1px solid var(--border) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+  box-shadow: 6px 0 30px rgba(0,0,0,0.45);
 }
 
-/* ---------- Scrollbar (Chromium) ---------- */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #0b0e14; }
-::-webkit-scrollbar-thumb { background: #232a38; border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: #e8b339; }
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span:not([data-testid="stIconMaterial"]),
+section[data-testid="stSidebar"] label {
+  font-family: "IBM Plex Mono", monospace !important;
+}
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+  font-family: "Space Grotesk", sans-serif !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.02em;
+}
+
+section[data-testid="stSidebar"] hr {
+  border-color: var(--border) !important;
+  margin: 1.1rem 0 !important;
+}
+
+section[data-testid="stSidebar"] .block-container {
+  padding-top: 3.2rem !important;
+  padding-left: 1.1rem !important;
+  padding-right: 1.1rem !important;
+  overflow: visible !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stCaptionContainer"],
+section[data-testid="stSidebar"] .stCaption {
+  color: var(--green) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  overflow: visible !important;
+  white-space: nowrap;
+}
+
+/* the ✅ checklist rows */
+section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.65rem !important;
+  margin-bottom: 0.4rem !important;
+  font-size: 0.86rem !important;
+}
+
+/* label above the main-area file uploader */
+.upload-heading {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 0.4rem 0 0.6rem 0;
+}
+
+/* file uploader dropzone */
+[data-testid="stFileUploaderDropzone"] {
+  background: var(--glass-strong) !important;
+  border: 1.5px dashed var(--border-strong) !important;
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(14px) !important;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-testid="stFileUploaderDropzone"] > div {
+  gap: 0.5rem;
+}
+
+[data-testid="stFileUploaderDropzone"]:hover {
+  border-color: var(--green) !important;
+  background: var(--glass-hover) !important;
+  box-shadow: 0 0 0 1px rgba(52,226,160,0.3), 0 8px 24px rgba(52,226,160,0.15);
+}
+
+/* ---------- buttons (all variants, incl. inside dropzone/downloads) ---------- */
+.stButton > button,
+[data-testid="stDownloadButton"] > button,
+[data-testid="stFileUploaderDropzone"] button,
+button[kind="secondary"],
+button[kind="primary"] {
+  background: var(--glass-strong) !important;
+  border: 1px solid var(--border-strong) !important;
+  color: var(--text) !important;
+  border-radius: 10px !important;
+  font-family: "IBM Plex Mono", monospace !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+  padding: 0.5rem 1.1rem !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  transition: all 0.18s ease !important;
+}
+
+.stButton > button:hover,
+[data-testid="stDownloadButton"] > button:hover,
+[data-testid="stFileUploaderDropzone"] button:hover,
+button[kind="secondary"]:hover,
+button[kind="primary"]:hover {
+  border-color: var(--green) !important;
+  color: var(--green) !important;
+  box-shadow: 0 0 0 1px rgba(52,226,160,0.35), 0 6px 20px rgba(52,226,160,0.18) !important;
+  transform: translateY(-1px);
+}
+
+/* ---------- metric cards ---------- */
+[data-testid="stMetric"] {
+  position: relative;
+  background: var(--glass-strong) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: 1.2rem 1.3rem 1.05rem !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+
+[data-testid="stMetric"]::before,
+[data-testid="stMetric"]::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+}
+
+[data-testid="stMetric"]::before {
+  top: 9px; left: 9px;
+  border-top: 2px solid var(--green);
+  border-left: 2px solid var(--green);
+  filter: drop-shadow(0 0 4px rgba(52,226,160,0.6));
+}
+
+[data-testid="stMetric"]::after {
+  bottom: 9px; right: 9px;
+  border-bottom: 2px solid var(--amber);
+  border-right: 2px solid var(--amber);
+  filter: drop-shadow(0 0 4px rgba(240,189,74,0.6));
+}
+
+[data-testid="stMetricLabel"] p {
+  color: var(--text-muted) !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase;
+}
+
+[data-testid="stMetricValue"] {
+  font-family: "Space Grotesk", sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 2rem !important;
+  color: var(--text) !important;
+}
+
+/* ---------- progress bar ---------- */
+[data-testid="stProgress"] > div > div {
+  background: linear-gradient(90deg, var(--red), var(--amber), var(--green)) !important;
+  box-shadow: 0 0 12px rgba(52,226,160,0.35);
+}
+
+[data-testid="stProgress"] > div {
+  background: rgba(255,255,255,0.08) !important;
+  border-radius: 999px !important;
+  height: 10px !important;
+}
+
+/* ---------- tabs ---------- */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 6px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  font-family: "IBM Plex Mono", monospace !important;
+  font-size: 0.87rem !important;
+  border-radius: 10px 10px 0 0 !important;
+  padding: 0.55rem 1.1rem !important;
+}
+
+.stTabs [aria-selected="true"] {
+  background: var(--glass-strong) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-bottom: none !important;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+  background-color: var(--green) !important;
+  box-shadow: 0 0 8px rgba(52,226,160,0.6);
+}
+
+/* ---------- dataframes / tables ---------- */
+[data-testid="stDataFrame"] {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.35);
+}
+
+/* ---------- selectbox / inputs ---------- */
+[data-baseweb="select"] > div {
+  background: var(--glass-strong) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 10px !important;
+  color: var(--text) !important;
+}
+
+[data-baseweb="popover"] {
+  font-family: "IBM Plex Mono", monospace !important;
+}
+
+/* ---------- alerts (info / success / warning) ---------- */
+[data-testid="stAlert"] {
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--border) !important;
+  backdrop-filter: blur(16px) !important;
+  background: var(--glass-strong) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+[data-testid="stAlert"] p {
+  color: var(--text) !important;
+}
+
+/* ---------- expander ---------- */
+[data-testid="stExpander"] {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--glass-strong) !important;
+  backdrop-filter: blur(14px) !important;
+  overflow: hidden;
+}
+
+/* ---------- json viewer ---------- */
+[data-testid="stJson"] {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+}
+
+/* ---------- misc ---------- */
+hr { border-color: var(--border) !important; }
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
